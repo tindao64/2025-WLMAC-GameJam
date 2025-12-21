@@ -1,65 +1,92 @@
-# Example file showing a circle moving on screen
+
 import pygame
-from screen import Screen
+from pygame.sprite import Sprite, Group
+import time
 
-# pygame setup
-pygame.init()
-screen = Screen(pygame.display.set_mode((300, 600)))
+SCREEN_WIDTH = 1920
+SCREEN_HEIGHT = 1080
 
-background = pygame.Surface(screen.screen.get_size())
-background = background.convert()
-background.fill("green")
+PLAYER_SPEED = SCREEN_WIDTH // 8 # pixels per second
+BULLET_SPEED = SCREEN_HEIGHT // 2
 
-player_pos = screen.screen.get_width() // 2
+PLAYER_SHOOT_COOLDOWN = 1 # second
+
 dt = 0.0
 
-class Bullet(pygame.sprite.Sprite):
+pygame.init()
+display = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+clock = pygame.time.Clock()
+
+all_sprites = Group()
+bullets = Group()
+
+background = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT)).convert() # `convert` converts the image format to the display's format to avoid re-converting every time drawn
+background.fill("green")
+
+class Player(Sprite):
+    def __init__(self):
+        super().__init__()
+        dimension = min(SCREEN_WIDTH, SCREEN_HEIGHT) // 8
+        self.surf = pygame.Surface((dimension, dimension)).convert()
+        self.surf.fill("red")
+        self.rect = self.surf.get_rect(center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT * 7 // 8))
+        self.last_shot_time = 0
+    
+    def update(self):
+        pass
+
+    def move_left(self):
+        self.rect = self.rect.move(-PLAYER_SPEED * dt, 0)
+        self.rect = self.rect.clamp((0, 0), (SCREEN_WIDTH, SCREEN_HEIGHT))
+    
+    def move_right(self):
+        self.rect = self.rect.move(PLAYER_SPEED * dt, 0)
+        self.rect = self.rect.clamp((0, 0), (SCREEN_WIDTH, SCREEN_HEIGHT))
+    
+    def shoot(self):
+        now = time.time()
+        if (now < self.last_shot_time + PLAYER_SHOOT_COOLDOWN):
+            return
+        self.last_shot_time = now
+        bullet = Bullet((self.rect.centerx, SCREEN_HEIGHT * 7 // 8))
+        bullets.add(bullet)
+        all_sprites.add(bullet)
+
+class Bullet(Sprite):
     def __init__(self, center):
         super().__init__()
-        self.surf = pygame.Surface((30, 30))
-        self.surf.fill((143, 183, 247))
+        dimension = min(SCREEN_WIDTH, SCREEN_HEIGHT) // 10
+        self.surf = pygame.Surface((dimension, dimension)).convert()
+        self.surf.fill("blue")
         self.rect = self.surf.get_rect(center = center)
     
-    def up(self):
-        self.rect = self.rect.move(0, dt * -200)
+    def update(self):
+        self.rect = self.rect.move(0, -BULLET_SPEED * dt)
+        if (self.rect.bottom < 0):
+            self.kill()
 
-bullets = pygame.sprite.Group()
+player = Player()
+all_sprites.add(player)
 
 while True:
-    # poll for events
-    # pygame.QUIT event means the user clicked X to close your window
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            screen.stop()
-        if event.type == pygame.KEYDOWN:
-            match event.key:
-                case pygame.K_SPACE:
-                    bullets.add(Bullet((player_pos, 550)))
-
-    screen.screen.blit(background, (0, 0))
-
-    pygame.draw.circle(screen.screen, "red", (player_pos, screen.screen.get_height() - 40), 40)
-
-    for bullet in bullets:
-        screen.screen.blit(bullet.surf, bullet.rect)
-        bullet.up()
-        if (bullet.rect.bottom < 0):
-            bullet.kill()
+            pygame.quit()
+            exit()
     
-    print(len(bullets))
-
+    display.blit(background, (0, 0))
+    for sprite in all_sprites:
+        display.blit(sprite.surf, sprite.rect)
+        sprite.update()
+    pygame.display.flip()
+    
     keys = pygame.key.get_pressed()
     if keys[pygame.K_a]:
-        player_pos = max(40, player_pos - 300 * dt)
+        player.move_left()
     if keys[pygame.K_d]:
-        player_pos = min(260, player_pos + 300 * dt)
-
-    # flip() the display to put your work on screen
-    pygame.display.flip()
-
-    # limits FPS to 60
-    # dt is delta time in seconds since last frame, used for framerate-
-    # independent physics.
-    dt = screen.clock.tick(60) / 1000
-
-pygame.quit()
+        player.move_right()
+    if keys[pygame.K_SPACE]:
+        player.shoot()
+ 
+    pygame.display.update()
+    dt = clock.tick(60) / 1000
