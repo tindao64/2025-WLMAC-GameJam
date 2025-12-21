@@ -2,6 +2,7 @@
 import pygame
 from pygame.sprite import Sprite, Group
 import time
+import math
 
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
@@ -27,13 +28,17 @@ class Player(Sprite):
     def __init__(self):
         super().__init__()
         dimension = min(SCREEN_WIDTH, SCREEN_HEIGHT) // 8
+        self.background = pygame.Surface((dimension, dimension)).convert()
+        self.background.fill("red")
         self.surf = pygame.Surface((dimension, dimension)).convert()
-        self.surf.fill("red")
         self.rect = self.surf.get_rect(center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT * 7 // 8))
         self.last_shot_time = 0
     
     def update(self):
-        pass
+        self.surf.blit(self.background, (0, 0))
+
+        degrees = min((time.time() - self.last_shot_time) / PLAYER_SHOOT_COOLDOWN, 1) * 360 + 90
+        pygame.draw.arc(self.surf, "yellow", self.surf.get_rect(), math.radians(90), math.radians(degrees), min(SCREEN_WIDTH, SCREEN_HEIGHT) // 32)
 
     def move_left(self):
         self.rect = self.rect.move(-PLAYER_SPEED * dt, 0)
@@ -76,8 +81,8 @@ while True:
     
     display.blit(background, (0, 0))
     for sprite in all_sprites:
-        display.blit(sprite.surf, sprite.rect)
         sprite.update()
+        display.blit(sprite.surf, sprite.rect)
     pygame.display.flip()
     
     keys = pygame.key.get_pressed()
