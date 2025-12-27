@@ -5,6 +5,8 @@ from config import *
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
+import snow
+
 from player import Player
 from map import Map
 
@@ -12,7 +14,7 @@ clock = pygame.time.Clock()
 dt = 0.0
 
 # Group containing all sprites
-all_sprites = pygame.sprite.Group()
+all_sprites = pygame.sprite.LayeredUpdates()
 
 # the background (map)
 map = Map(all_sprites)
