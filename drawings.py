@@ -13,10 +13,11 @@ pygame.draw.rect( # Draw blue in direction player is facing
     (0, 0, PLAYER_DIMENSION, PLAYER_DIMENSION // 3) # (x, y, w, h)
 )
 
-map_img = pygame.surface.Surface((SCREEN_WIDTH * 3, SCREEN_HEIGHT * 3)).convert_alpha()
-map_img.fill("green")
-pygame.draw.rect( # draw yellow thing in middle
-    map_img,
-    "yellow",
-    (SCREEN_WIDTH * 3//2, SCREEN_HEIGHT * 3//2, PLAYER_DIMENSION, PLAYER_DIMENSION)
+snow_img = pygame.surface.Surface((TILE_DIMENSION, TILE_DIMENSION)).convert()
+snow_img.fill("snow")
+pygame.draw.rect(
+    snow_img,
+    "snow4",
+    (0, 0, TILE_DIMENSION, TILE_DIMENSION),
+    width=(TILE_DIMENSION // 10)
 )

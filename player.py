@@ -7,14 +7,15 @@ class Player(pygame.sprite.Sprite):
         super().__init__(*groups)
         
         # image
-        self.image = pygame.Surface((PLAYER_DIMENSION, PLAYER_DIMENSION)).convert_alpha()
-        self.image.blit(drawings.player_img, (0, 0))
+        self.image = drawings.player_img.copy()
 
         # pos
         self.rect = self.image.get_rect(center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
 
         # dir
         self.direction = Direction.UP
+
+        self._layer = PLAYER_LAYER
     
     def update(self, dt: float, keys: pygame.key.ScancodeWrapper):
         # Update direction we "look"
