@@ -14,15 +14,16 @@ class Map(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
 
         self.tile_groups: dict[str, pygame.sprite.Group] = {}
-        self.tiles: list[tile.Tile] = []
+        self.tiles: list[tile.Tile | None] = []
 
         # TODO: random choice of tiles
         # fill in map completely randomly for now
         weights = [1] * len(tile.tile_types)
         self.make_map(weights)
 
-
         self._layer = MAP_LAYER
+
+        self.speed = PLAYER_SPEED
     
     # Fills in the map with stuff
     # Weights are relative to each other
@@ -53,10 +54,16 @@ class Map(pygame.sprite.Sprite):
         self.redraw()
     
     def set_tile(self, x, y, new_tile: tile.Tile):
+        old = self.tiles[y * MAP_WIDTH + x]
+        if old is not None:
+            self.remove_tile(old)
         self.tiles[y * MAP_WIDTH + x] = new_tile
         new_tile.position = [x, y]
         new_tile.rect = [new_tile.position[0] * TILE_DIMENSION, new_tile.position[1] * TILE_DIMENSION, TILE_DIMENSION, TILE_DIMENSION]
-        self.redraw()
+
+        self.tile_groups["all"].add(new_tile)
+        self.tile_groups.setdefault(new_tile.type(), pygame.sprite.Group()).add(new_tile)
+
     
     def remove_tile(self, tile: tile.Tile):
         self.tile_groups["all"].remove(tile)
@@ -65,9 +72,10 @@ class Map(pygame.sprite.Sprite):
         tile_group.remove(tile)
         if len(tile_group) == 0:
             self.tile_groups.pop(tile.type())
-        self.redraw()
         
-    def player_collide(self, group_name: str):
+        self.tiles[tile.position[1] * MAP_WIDTH + tile.position[0]] = None
+        
+    def player_collide(self, group_name: str) -> list[tile.Tile]:
         if group_name not in self.tile_groups:
             return []
         group = self.tile_groups[group_name]
@@ -107,13 +115,13 @@ class Map(pygame.sprite.Sprite):
         # dt is time since last update
         # multiply with PLAYER_SPEED to ensure constant moving speed
         if keys[KEY_UP]:
-            self.rect = self.rect.move(0, PLAYER_SPEED * dt)
+            self.rect = self.rect.move(0, self.speed * dt)
         if keys[KEY_DOWN]:
-            self.rect = self.rect.move(0, -PLAYER_SPEED * dt)
+            self.rect = self.rect.move(0, -self.speed * dt)
         if keys[KEY_LEFT]:
-            self.rect = self.rect.move(PLAYER_SPEED * dt, 0)
+            self.rect = self.rect.move(self.speed * dt, 0)
         if keys[KEY_RIGHT]:
-            self.rect = self.rect.move(-PLAYER_SPEED * dt, 0)
+            self.rect = self.rect.move(-self.speed * dt, 0)
 
         # Ensure player can't go off the map
         PLAYER_LEFT = SCREEN_WIDTH // 2 - PLAYER_DIMENSION // 2

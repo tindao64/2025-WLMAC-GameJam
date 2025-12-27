@@ -7,7 +7,7 @@ class Player(pygame.sprite.Sprite):
         super().__init__(*groups)
         
         # image
-        self.image = drawings.player_img.copy()
+        self.image = drawings.make_player_img(Direction.UP, 0)
 
         # pos
         self.rect = self.image.get_rect(center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
@@ -35,16 +35,5 @@ class Player(pygame.sprite.Sprite):
         # Skip updating if direction didn't change
         if self.direction == old_direction:
             return
-        
-        self.image.blit(drawings.player_img, (0, 0))
-
-        match self.direction:
-            case Direction.UP:
-                self.image = pygame.transform.rotate(self.image, 0)
-            case Direction.DOWN:
-                self.image = pygame.transform.rotate(self.image, 180)
-            case Direction.LEFT:
-                self.image = pygame.transform.rotate(self.image, 90)
-            case Direction.RIGHT:
-                self.image = pygame.transform.rotate(self.image, 270)
-
+        self.image.fill((0,0,0,0))
+        self.image.blit(drawings.make_player_img(self.direction, self.score), (0, 0))

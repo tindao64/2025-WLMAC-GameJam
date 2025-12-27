@@ -16,10 +16,14 @@ KEY_RIGHT = pygame.K_d
 
 TILE_DIMENSION = PLAYER_DIMENSION * 3 // 2
 
-MAP_WIDTH = 10 # tiles
-MAP_HEIGHT = 10
+MAP_WIDTH = 25 # tiles
+MAP_HEIGHT = 25
 
 PLAYER_SPEED = min(SCREEN_WIDTH, SCREEN_HEIGHT) // 4 # pixels per second
+
+PLAYER_SMALL_BALL_THRESHOLD = 5
+PLAYER_MEDIUM_BALL_THRESHOLD = 13
+PLAYER_BIG_BALL_THRESHOLD = 20
 
 # Common things
 # Don't change these; these aren't config!
