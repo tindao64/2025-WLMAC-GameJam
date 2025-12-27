@@ -21,3 +21,12 @@ pygame.draw.rect(
     (0, 0, TILE_DIMENSION, TILE_DIMENSION),
     width=(TILE_DIMENSION // 10)
 )
+
+fire_img = pygame.surface.Surface((TILE_DIMENSION, TILE_DIMENSION)).convert()
+fire_img.fill("red")
+pygame.draw.rect(
+    fire_img,
+    "orange",
+    (0, 0, TILE_DIMENSION, TILE_DIMENSION),
+    width=(TILE_DIMENSION // 10)
+)

@@ -19,21 +19,23 @@ TILE_DIMENSION = PLAYER_DIMENSION * 3 // 2
 MAP_WIDTH = 10 # tiles
 MAP_HEIGHT = 10
 
-
+PLAYER_SPEED = min(SCREEN_WIDTH, SCREEN_HEIGHT) // 4 # pixels per second
 
 # Common things
 # Don't change these; these aren't config!
 
 class Direction(Enum):
-        UP = 0
-        RIGHT = 1
-        DOWN = 2
-        LEFT = 3
+    UP = 0
+    RIGHT = 1
+    DOWN = 2
+    LEFT = 3
 
 # Drawing order: bigger number goes above smaller number
 # Draws player on top of map, not other way around
 MAP_LAYER = 0
 PLAYER_LAYER = 1
 
-PLAYER_SPEED = min(SCREEN_WIDTH, SCREEN_HEIGHT) // 4 # pixels per second
-
+def draw_text(surf: pygame.Surface, text: str, dest, color, size, bg = None):
+    font = pygame.font.SysFont(None, size)
+    text_surf = font.render(text, True, color, bg)
+    surf.blit(text_surf, dest)

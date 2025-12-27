@@ -15,6 +15,8 @@ class Player(pygame.sprite.Sprite):
         # dir
         self.direction = Direction.UP
 
+        self.score = 0
+
         self._layer = PLAYER_LAYER
     
     def update(self, dt: float, keys: pygame.key.ScancodeWrapper):

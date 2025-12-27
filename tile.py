@@ -11,11 +11,17 @@ class Tile(pygame.sprite.Sprite):
     def __init__(self, *groups):
         super().__init__(*groups)
         self.image = pygame.Surface((TILE_DIMENSION, TILE_DIMENSION)).convert()
+        self.position: list[int] = [-1, -1] # This is set by the Map
+        self.rect: list[int] = [-1, -1, TILE_DIMENSION, TILE_DIMENSION] # Also set by the map
     
     # Please implement this in subclasses
     # Return a string containing the type
     def type(self) -> str:
         ...
+    
+    # Use Map.remove instead, which properly handles it
+    def kill(self):
+        raise TypeError("kill() is not supported on `Tile`s. Use Map.remove instead.")
 
 # Tiles should fill in one entry into these upon importing
 

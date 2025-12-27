@@ -5,7 +5,8 @@ from config import *
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-import snow
+import snow as _
+import fire as _
 
 from player import Player
 from map import Map
@@ -18,6 +19,7 @@ all_sprites = pygame.sprite.LayeredUpdates()
 
 # the background (map)
 map = Map(all_sprites)
+map.make_map([60, 40])
 
 # the player
 player = Player(all_sprites)
@@ -36,6 +38,15 @@ while True:
 
     all_sprites.update(dt, keys)
     all_sprites.draw(screen)
+
+    for s in map.player_collide("snow"):
+        map.remove_tile(s)
+        player.score += 1
+    for f in map.player_collide("fire"):
+        map.remove_tile(f)
+        player.score = 0
+    
+    draw_text(screen, f'Score: {player.score}', (0, 0), (255, 255, 255), SCREEN_HEIGHT // 8)
 
     # flip() the display to put your work on screen
     pygame.display.flip()

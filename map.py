@@ -13,10 +13,14 @@ class Map(pygame.sprite.Sprite):
         # pos
         self.rect = self.image.get_rect(center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
 
+        self.tile_groups: dict[str, pygame.sprite.Group] = {}
+        self.tiles: list[tile.Tile] = []
+
         # TODO: random choice of tiles
         # fill in map completely randomly for now
         weights = [1] * len(tile.tile_types)
         self.make_map(weights)
+
 
         self._layer = MAP_LAYER
     
@@ -26,29 +30,71 @@ class Map(pygame.sprite.Sprite):
     def make_map(self, weights):
         # generate the tiles
         tiletypes = random.choices(tile.tile_types, weights=weights, k=(MAP_WIDTH * MAP_HEIGHT))
-        self.tiles = [tile.make_tile(t) for t in tiletypes]
+        self.tiles.clear()
+        self.tile_groups.clear()
+        self.tile_groups["all"] = pygame.sprite.Group()
+
+        position = 0
+
+        for type in tiletypes:
+            t = tile.make_tile(type)
+            self.tiles.append(t)
+
+            # Add to typed and all groups
+            group = self.tile_groups.setdefault(type, pygame.sprite.Group())
+            group.add(t)
+            self.tile_groups["all"].add(t)
+
+            # Set its position
+            t.position = [position % MAP_WIDTH, position // MAP_WIDTH]
+            t.rect = [t.position[0] * TILE_DIMENSION, t.position[1] * TILE_DIMENSION, TILE_DIMENSION, TILE_DIMENSION]
+            position += 1
+
         self.redraw()
     
     def set_tile(self, x, y, new_tile: tile.Tile):
         self.tiles[y * MAP_WIDTH + x] = new_tile
+        new_tile.position = [x, y]
+        new_tile.rect = [new_tile.position[0] * TILE_DIMENSION, new_tile.position[1] * TILE_DIMENSION, TILE_DIMENSION, TILE_DIMENSION]
         self.redraw()
+    
+    def remove_tile(self, tile: tile.Tile):
+        self.tile_groups["all"].remove(tile)
+
+        tile_group = self.tile_groups[tile.type()]
+        tile_group.remove(tile)
+        if len(tile_group) == 0:
+            self.tile_groups.pop(tile.type())
+        self.redraw()
+        
+    def player_collide(self, group_name: str):
+        if group_name not in self.tile_groups:
+            return []
+        group = self.tile_groups[group_name]
+
+        # The player rect, as seen by us
+        player_rect_relative = pygame.Rect(
+            SCREEN_WIDTH // 2 - self.rect.x - PLAYER_DIMENSION // 2,
+            SCREEN_HEIGHT // 2 - self.rect.y - PLAYER_DIMENSION // 2,
+            PLAYER_DIMENSION,
+            PLAYER_DIMENSION
+        )
+
+        sprites = group.sprites()
+
+        collided = player_rect_relative.collideobjectsall(
+            sprites,
+            key=lambda s: s.rect
+        )
+        return collided
+    
+    # Get a group of tiles by type, or "all" which is all of them
+    def get_group(self, group: str):
+        return self.tile_groups[group]
     
     def redraw(self):
         self.image.fill("black")
-        for x in range(MAP_WIDTH):
-            for y in range(MAP_HEIGHT):
-                self.image.blit(
-                    self.tiles[y * MAP_WIDTH + x].image, # tile image
-                    (x * TILE_DIMENSION, y * TILE_DIMENSION) # tile coords on screen
-                )
-        # TODO: remove debug, also remove the redraw in update()
-        center = self.get_center()
-        pygame.draw.rect(
-            self.image,
-            "purple",
-            (center[0] * TILE_DIMENSION, center[1] * TILE_DIMENSION, TILE_DIMENSION, TILE_DIMENSION),
-            width=(TILE_DIMENSION//10)
-        )
+        self.tile_groups["all"].draw(self.image)
     
     # Returns the tile coordinate that is currently in the middle of the screen
     def get_center(self):
@@ -83,4 +129,3 @@ class Map(pygame.sprite.Sprite):
             self.rect = self.rect.move(0, PLAYER_TOP - self.rect.top)
         if self.rect.bottom < PLAYER_BOTTOM:
             self.rect = self.rect.move(0, PLAYER_BOTTOM - self.rect.bottom)
-        self.redraw()
