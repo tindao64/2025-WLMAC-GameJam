@@ -4,7 +4,7 @@ import pygame
 from config import *
 from typing import Callable
 
-type TileType = str
+TileType = str
 
 class Tile(pygame.sprite.Sprite):
     def __init__(self, *groups):

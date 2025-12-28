@@ -28,6 +28,8 @@ grass = pygame.image.load("tiles/grass.png").convert_alpha()
 
 ice = pygame.image.load("tiles/ice.png").convert_alpha()
 
+wood = pygame.image.load("tiles/wood.png").convert_alpha() ##############################
+
 heart = pygame.image.load("misc/heart.png").convert_alpha()
 
 how_to_play = pygame.image.load("misc/how_to_play.png").convert_alpha()
@@ -66,6 +68,9 @@ def make_player_img(dir: Direction, score: int) -> pygame.Surface:
 
 def make_snow_img() -> pygame.Surface:
     return pygame.transform.scale(random.choice([snow_thin1, snow_thin2]).copy(), (TILE_DIMENSION, TILE_DIMENSION))
+
+def make_wood_img() -> pygame.Surface:
+    return pygame.transform.scale(wood.copy(), (TILE_DIMENSION, TILE_DIMENSION))
 
 def make_deep_snow_img() -> pygame.Surface:
     return pygame.transform.scale(random.choice([snow_thick1, snow_thick2]).copy(), (TILE_DIMENSION, TILE_DIMENSION))

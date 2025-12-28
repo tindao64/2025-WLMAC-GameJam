@@ -35,6 +35,14 @@ class Map(pygame.sprite.Sprite):
 
         position = 0
 
+
+
+        top_rows_count = 3 * MAP_WIDTH
+        top_tile_type = "wood"
+        for i in range(top_rows_count):
+            tiletypes[i] = top_tile_type
+            
+            
         for type in tiletypes:
             t = tile.make_tile(type)
 

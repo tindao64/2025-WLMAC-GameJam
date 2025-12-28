@@ -8,9 +8,14 @@ class Santa(pygame.sprite.Sprite):
         super().__init__(*groups)
 
         self.image = drawings.make_santa()
-        self.go_to_random()
-
+        # FIX: Add parentheses to EXECUTE the method
+        self.go_to_spawn() # <--- Corrected!
         self.total_score = 0
+    
+    def go_to_spawn(self):
+        new_pos = (TILE_DIMENSION // 2, TILE_DIMENSION // 2) 
+        
+        self.rect = self.image.get_rect(center=new_pos)
 
     def go_to_random(self):
         random_x_min = PLAYER_DIMENSION // 2
