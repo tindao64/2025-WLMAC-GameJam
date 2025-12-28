@@ -84,14 +84,14 @@ while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
-            exit()
+            sys.exit()
 
     if player.health <= 0:
         draw_text(screen, "YOU LOSE!", (0, 0), "white", SCREEN_HEIGHT // 4, "red")
         pygame.display.flip()
         time.sleep(5)
         pygame.quit()
-        exit()
+        sys.exit()
 
     keys = pygame.key.get_pressed()
 
@@ -101,7 +101,7 @@ while True:
         pygame.display.flip()
         time.sleep(5)
         pygame.quit()
-        exit()
+        sys.exit()
 
     screen.fill("black")
 
