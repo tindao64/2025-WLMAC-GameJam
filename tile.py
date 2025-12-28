@@ -2,7 +2,6 @@
 
 import pygame
 from config import *
-from enum import Enum
 from typing import Callable
 
 TileType = str
@@ -11,8 +10,12 @@ class Tile(pygame.sprite.Sprite):
     def __init__(self, *groups):
         super().__init__(*groups)
         self.image = pygame.Surface((TILE_DIMENSION, TILE_DIMENSION)).convert()
-        self.position: list[int] = [-1, -1] # This is set by the Map
-        self.rect: list[int] = [-1, -1, TILE_DIMENSION, TILE_DIMENSION] # Also set by the map
+        self.position: tuple[int, int] = (-1, -1) # This is set by the Map
+        self.rect: pygame.Rect = self.image.get_rect(topleft=(-1, -1))
+    
+    def update_rect(self):
+        x, y = self.position
+        self.rect = pygame.Rect(x * TILE_DIMENSION, y * TILE_DIMENSION, TILE_DIMENSION, TILE_DIMENSION)
     
     # Please implement this in subclasses
     # Return a string containing the type

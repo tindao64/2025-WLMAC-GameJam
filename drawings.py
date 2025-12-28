@@ -32,6 +32,8 @@ heart = pygame.image.load("misc/heart.png").convert_alpha()
 
 how_to_play = pygame.image.load("misc/how_to_play.png").convert_alpha()
 
+santa = pygame.image.load("misc/santa.png").convert_alpha()
+
 def make_player_img(dir: Direction, score: int) -> pygame.Surface:
     snow = None
     if score >= PLAYER_SMALL_BALL_THRESHOLD:
@@ -91,3 +93,5 @@ def make_how_to_play() -> pygame.Surface:
     scale_factor = SCREEN_HEIGHT / how_to_play.get_height()
     return pygame.transform.scale_by(how_to_play, scale_factor)
 
+def make_santa() -> pygame.Surface:
+    return pygame.transform.scale(santa.copy(), (PLAYER_DIMENSION, PLAYER_DIMENSION))
