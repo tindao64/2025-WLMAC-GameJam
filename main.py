@@ -21,6 +21,7 @@ import drawings
 import time
 import tile
 import random
+import sys
 
 clock = pygame.time.Clock()
 dt = 0.0
@@ -73,7 +74,7 @@ while wait:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
-            exit()
+            sys.exit()
         elif event.type == pygame.KEYDOWN:
             wait = False
 
