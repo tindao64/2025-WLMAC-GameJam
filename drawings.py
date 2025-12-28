@@ -4,38 +4,53 @@ import pygame
 from config import *
 import random
 
-player_up = pygame.image.load("player/up.png").convert_alpha()
-player_down = pygame.image.load("player/down.png").convert_alpha()
-player_left = pygame.image.load("player/left.png").convert_alpha()
-player_right = pygame.image.load("player/right.png").convert_alpha()
 
-ball_small = pygame.image.load("player/small_ball.png").convert_alpha()
-ball_med = pygame.image.load("player/med_ball.png").convert_alpha()
-ball_big = pygame.image.load("player/big_ball.png").convert_alpha()
+import os
+import sys
 
-fire1 = pygame.image.load("tiles/fire1.png").convert_alpha()
-fire2 = pygame.image.load("tiles/fire2.png").convert_alpha()
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        # For development environment (outside of .exe)
+        base_path = os.path.abspath(".")
 
-water1 = pygame.image.load("tiles/water1.png").convert_alpha()
-water2 = pygame.image.load("tiles/water2.png").convert_alpha()
+    return os.path.join(base_path, relative_path)
 
-snow_thin1 = pygame.image.load("tiles/snow_thin1.png").convert_alpha()
-snow_thin2 = pygame.image.load("tiles/snow_thin2.png").convert_alpha()
-snow_thick1 = pygame.image.load("tiles/snow_thick1.png").convert_alpha()
-snow_thick2 = pygame.image.load("tiles/snow_thick2.png").convert_alpha()
+player_up = pygame.image.load(resource_path("player/up.png")).convert_alpha() ####
+player_down = pygame.image.load(resource_path("player/down.png")).convert_alpha() ####
+player_left = pygame.image.load(resource_path("player/left.png")).convert_alpha() ####
+player_right = pygame.image.load(resource_path("player/right.png")).convert_alpha() ####
 
-grass = pygame.image.load("tiles/grass.png").convert_alpha()
+ball_small = pygame.image.load(resource_path("player/small_ball.png")).convert_alpha() ####
+ball_med = pygame.image.load(resource_path("player/med_ball.png")).convert_alpha() ####
+ball_big = pygame.image.load(resource_path("player/big_ball.png")).convert_alpha() ####
 
-ice = pygame.image.load("tiles/ice.png").convert_alpha()
+fire1 = pygame.image.load(resource_path("tiles/fire1.png")).convert_alpha() ####
+fire2 = pygame.image.load(resource_path("tiles/fire2.png")).convert_alpha() ####
 
-wood = pygame.image.load("tiles/wood.png").convert_alpha() ##############################
+water1 = pygame.image.load(resource_path("tiles/water1.png")).convert_alpha() ####
+water2 = pygame.image.load(resource_path("tiles/water2.png")).convert_alpha() ####
 
-heart = pygame.image.load("misc/heart.png").convert_alpha()
+snow_thin1 = pygame.image.load(resource_path("tiles/snow_thin1.png")).convert_alpha() ####
+snow_thin2 = pygame.image.load(resource_path("tiles/snow_thin2.png")).convert_alpha() ####
+snow_thick1 = pygame.image.load(resource_path("tiles/snow_thick1.png")).convert_alpha() ####
+snow_thick2 = pygame.image.load(resource_path("tiles/snow_thick2.png")).convert_alpha() ####
 
-how_to_play = pygame.image.load("misc/how_to_play.png").convert_alpha()
+grass = pygame.image.load(resource_path("tiles/grass.png")).convert_alpha() ####
 
-santa = pygame.image.load("misc/santa.png").convert_alpha()
-evil_santa = pygame.image.load("misc/evil_santa.png").convert_alpha()
+ice = pygame.image.load(resource_path("tiles/ice.png")).convert_alpha() ####
+
+wood = pygame.image.load(resource_path("tiles/wood.png")).convert_alpha() ############################## ####
+
+heart = pygame.image.load(resource_path("misc/heart.png")).convert_alpha() ####
+
+how_to_play = pygame.image.load(resource_path("misc/how_to_play.png")).convert_alpha() ####
+
+santa = pygame.image.load(resource_path("misc/santa.png")).convert_alpha() ####
+evil_santa = pygame.image.load(resource_path("misc/evil_santa.png")).convert_alpha() ####
 
 def make_player_img(dir: Direction, score: int) -> pygame.Surface:
     snow = None
