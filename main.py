@@ -77,12 +77,13 @@ while wait:
             sys.exit()
         elif event.type == pygame.KEYDOWN:
             wait = False
+    clock.tick(60)
 
 while True:
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+        if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_q:
             pygame.quit()
             sys.exit()
 
