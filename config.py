@@ -16,13 +16,8 @@ KEY_RIGHT = pygame.K_d
 
 TILE_DIMENSION = PLAYER_DIMENSION * 3 // 2
 
-<<<<<<< HEAD
 MAP_WIDTH = 6 # tiles
 MAP_HEIGHT = 30
-=======
-MAP_WIDTH = 25 # tiles
-MAP_HEIGHT = 8
->>>>>>> 2523580269cdcb8591c9df064418ae205fabcc89
 
 PLAYER_SPEED = min(SCREEN_WIDTH, SCREEN_HEIGHT) // 4 # pixels per second
 ICE_SPEED_MULT = 25
