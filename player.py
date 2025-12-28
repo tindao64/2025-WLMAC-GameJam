@@ -20,7 +20,7 @@ class Player(pygame.sprite.Sprite):
         self.health = PLAYER_HEALTH
         self._layer = PLAYER_LAYER
     
-    def update(self, dt: float, keys: pygame.key.ScancodeWrapper):
+    def update(self, dt: float, keys: pygame.key.ScancodeWrapper, *_):
         # Update direction we "look"
 
         if keys[KEY_UP]:

@@ -3,11 +3,11 @@ import drawings
 from config import *
 import random
 
-class Santa(pygame.sprite.Sprite):
+class EvilSanta(pygame.sprite.Sprite):
     def __init__(self, *groups) -> None:
         super().__init__(*groups)
 
-        self.image = drawings.make_santa()
+        self.image = drawings.make_evil_santa()
         self.go_to_random()
 
         self.total_score = 0
@@ -25,5 +25,10 @@ class Santa(pygame.sprite.Sprite):
 
         self.rect = self.image.get_rect(center=new_pos)
     
-    def update(self, dt: float, keys: pygame.key.ScancodeWrapper, *_):
-        ...
+    def update(self, dt: float, keys: pygame.key.ScancodeWrapper, player_rect: pygame.Rect, *_):
+        cmp = lambda x,y: (x>y)-(x<y)
+        
+        self.rect.move_ip(
+            cmp(player_rect.centerx, self.rect.centerx) * dt * EVIL_SANTA_SPEED,
+            cmp(player_rect.centery, self.rect.centery) * dt * EVIL_SANTA_SPEED
+        )

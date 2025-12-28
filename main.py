@@ -15,6 +15,7 @@ import ice as _
 
 from player import Player
 from santa import Santa
+from evil_santa import EvilSanta
 from map import Map
 import drawings
 import time
@@ -28,12 +29,13 @@ all_sprites = pygame.sprite.LayeredUpdates()
 
 # the background (map)
 map = Map(all_sprites)
-map.make_map([50, 10, 10, 10, 10, 10])
+map.make_map([50, 15, 5, 10, 10, 10])
 
 # the player
 player = Player(all_sprites)
 
 santa = Santa(all_sprites)
+evil_santa = EvilSanta(all_sprites)
 
 ice_time_left = 0.0
 play_time_left = PLAY_TIME
@@ -83,7 +85,7 @@ while True:
         ice_time_left = 0
         player.speed = PLAYER_SPEED
 
-    all_sprites.update(dt, keys)
+    all_sprites.update(dt, keys, player.rect)
 
     # Draw all sprites offset so the player is always in the middle of the screen
     offset_x = SCREEN_WIDTH // 2 - player.rect.centerx
@@ -118,6 +120,11 @@ while True:
         santa.total_score += player.score
         player.score = 0
         santa.go_to_random()
+    
+    if player.rect.colliderect(evil_santa.rect):
+        player.score = 0
+        player.health -= 1
+        evil_santa.go_to_random()
     
     map.redraw()
     

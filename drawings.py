@@ -33,6 +33,7 @@ heart = pygame.image.load("misc/heart.png").convert_alpha()
 how_to_play = pygame.image.load("misc/how_to_play.png").convert_alpha()
 
 santa = pygame.image.load("misc/santa.png").convert_alpha()
+evil_santa = pygame.image.load("misc/evil_santa.png").convert_alpha()
 
 def make_player_img(dir: Direction, score: int) -> pygame.Surface:
     snow = None
@@ -95,3 +96,6 @@ def make_how_to_play() -> pygame.Surface:
 
 def make_santa() -> pygame.Surface:
     return pygame.transform.scale(santa.copy(), (PLAYER_DIMENSION, PLAYER_DIMENSION))
+
+def make_evil_santa() -> pygame.Surface:
+    return pygame.transform.scale(evil_santa.copy(), (PLAYER_DIMENSION, PLAYER_DIMENSION))

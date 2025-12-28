@@ -85,5 +85,5 @@ class Map(pygame.sprite.Sprite):
         self.image.fill("black")
         self.all_sprites.draw(self.image)
     
-    def update(self, dt: float, keys: pygame.key.ScancodeWrapper):
+    def update(self, dt: float, keys: pygame.key.ScancodeWrapper, *_):
         ...
