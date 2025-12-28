@@ -8,8 +8,7 @@ class Santa(pygame.sprite.Sprite):
         super().__init__(*groups)
 
         self.image = drawings.make_santa()
-        # FIX: Add parentheses to EXECUTE the method
-        self.go_to_spawn() # <--- Corrected!
+        self.go_to_spawn()
         self.total_score = 0
     
     def go_to_spawn(self):

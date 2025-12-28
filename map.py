@@ -3,6 +3,7 @@ from config import *
 import tile
 import random
 from ordered_group import OrderedGroup
+from typing import Callable
 
 class Map(pygame.sprite.Sprite):
     def __init__(self, *groups):
@@ -17,33 +18,21 @@ class Map(pygame.sprite.Sprite):
         self.tile_groups: dict[str, pygame.sprite.Group] = {}
         self.all_sprites = OrderedGroup()
 
-        # TODO: random choice of tiles
-        # fill in map completely randomly for now
-        weights = [1] * len(tile.tile_types)
-        self.make_map(weights)
-
         self._layer = MAP_LAYER
 
     # Fills in the map with stuff
     # Weights are relative to each other
     # len(weights) should equal len(tile.tile_types)
-    def make_map(self, weights):
-        # generate the tiles
-        tiletypes = random.choices(tile.tile_types, weights=weights, k=(MAP_WIDTH * MAP_HEIGHT))
+    def make_map(self, generator: Callable[[tuple[int, int]], tile.TileType]):
+        # clear the existing tiles
         self.tile_groups.clear()
         self.all_sprites.empty()
+        
+        # generate tiles
+        for position in range(MAP_WIDTH * MAP_HEIGHT):
+            x, y = position % MAP_WIDTH, position // MAP_WIDTH
 
-        position = 0
-
-
-
-        top_rows_count = 3 * MAP_WIDTH
-        top_tile_type = "wood"
-        for i in range(top_rows_count):
-            tiletypes[i] = top_tile_type
-            
-            
-        for type in tiletypes:
+            type = generator((x, y))
             t = tile.make_tile(type)
 
             # Add to typed and all groups
@@ -52,7 +41,7 @@ class Map(pygame.sprite.Sprite):
             self.all_sprites.add(t)
 
             # Set its position
-            t.position = (position % MAP_WIDTH, position // MAP_WIDTH)
+            t.position = (x, y)
             t.update_rect()
             position += 1
 
