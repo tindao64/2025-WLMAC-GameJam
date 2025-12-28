@@ -28,7 +28,7 @@ all_sprites = pygame.sprite.LayeredUpdates()
 
 # the background (map)
 map = Map(all_sprites)
-map.make_map([50, 10, 10, 10, 10, 10, 5])
+map.make_map([50, 10, 10, 10, 10, 10, 0])
 
 # the player
 player = Player(all_sprites)
@@ -114,10 +114,10 @@ while True:
             player.speed = PLAYER_SPEED * ICE_SPEED_MULT
             ice_time_left = ICE_SPEED_TIME
     
-    if player.rect.colliderect(santa.rect):
+    """if player.rect.colliderect(santa.rect):
         santa.total_score += player.score
         player.score = 0
-        santa.go_to_random()
+        santa.go_to_random()"""
     
     map.redraw()
     
