@@ -14,9 +14,11 @@ import ice as _
 
 
 from player import Player
+from santa import Santa
 from map import Map
 import drawings
 import time
+import tile
 
 clock = pygame.time.Clock()
 dt = 0.0
@@ -30,6 +32,8 @@ map.make_map([50, 10, 10, 10, 10, 10])
 
 # the player
 player = Player(all_sprites)
+
+santa = Santa(all_sprites)
 
 ice_time_left = 0.0
 play_time_left = PLAY_TIME
@@ -65,7 +69,7 @@ while True:
 
     play_time_left -= dt
     if play_time_left <= 0:
-        draw_text(screen, f"Game Over! Score: {player.score}", (0, 0), "white", SCREEN_HEIGHT // 5, "blue")
+        draw_text(screen, f"Game Over! Score: {santa.total_score}", (0, 0), "white", SCREEN_HEIGHT // 5, "blue")
         pygame.display.flip()
         time.sleep(5)
         pygame.quit()
@@ -77,35 +81,52 @@ while True:
         ice_time_left -= dt
     if ice_time_left <= 0:
         ice_time_left = 0
-        map.speed = PLAYER_SPEED
+        player.speed = PLAYER_SPEED
 
     all_sprites.update(dt, keys)
-    all_sprites.draw(screen)
 
-    for s in map.player_collide("snow"):
-        map.set_tile(s.position[0], s.position[1], grass.Grass())
-        player.score += 1
-    for f in map.player_collide("fire"):
-        map.set_tile(f.position[0], f.position[1], grass.Grass())
+    # Draw all sprites offset so the player is always in the middle of the screen
+    offset_x = SCREEN_WIDTH // 2 - player.rect.centerx
+    offset_y = SCREEN_HEIGHT // 2 - player.rect.centery
+    for sprite in all_sprites:
+        screen.blit(sprite.image, (sprite.rect.x + offset_x, sprite.rect.y + offset_y))
+
+    
+    if map.has_group("snow"):
+        for s in pygame.sprite.spritecollide(player, map.get_group("snow"), False):
+            map.set_tile(s.position, grass.Grass())
+            player.score += 1
+    if map.has_group("fire"):
+        for f in pygame.sprite.spritecollide(player, map.get_group("fire"), False):
+            map.set_tile(f.position, grass.Grass())
+            player.score = 0
+            player.health -= 1
+    if map.has_group("water"):
+        for w in pygame.sprite.spritecollide(player, map.get_group("water"), False):
+            map.set_tile(w.position, grass.Grass())
+            player.score //= 2
+    if map.has_group("deep_snow"):
+        for d in pygame.sprite.spritecollide(player, map.get_group("deep_snow"), False):
+            map.set_tile(d.position, grass.Grass())
+            player.score += 4
+    if map.has_group("ice"):
+        for i in pygame.sprite.spritecollide(player, map.get_group("ice"), False):
+            player.speed = PLAYER_SPEED * ICE_SPEED_MULT
+            ice_time_left = ICE_SPEED_TIME
+    
+    if player.rect.colliderect(santa.rect):
+        santa.total_score += player.score
         player.score = 0
-        player.health -= 1
-    for w in map.player_collide("water"):
-        map.set_tile(w.position[0], w.position[1], grass.Grass())
-        player.score //= 2
-    for d in map.player_collide("deep_snow"):
-        map.set_tile(d.position[0], d.position[1], grass.Grass())
-        player.score += 4
-    for i in map.player_collide("ice"):
-        map.speed = PLAYER_SPEED * ICE_SPEED_MULT
-        ice_time_left = ICE_SPEED_TIME
+        santa.go_to_random()
     
     map.redraw()
     
     
-    draw_text(screen, f'Score: {player.score}', (0, 0), "white", SCREEN_HEIGHT // 8)
-    draw_text(screen, f'Time: {int(play_time_left)}s', (0, SCREEN_HEIGHT // 8), "white", SCREEN_HEIGHT // 8)
+    draw_text(screen, f'Score: {santa.total_score}', (0, 0), "white", SCREEN_HEIGHT // 8, "black")
+    draw_text(screen, f'Time: {int(play_time_left)}s', (0, SCREEN_HEIGHT // 8), "white", SCREEN_HEIGHT // 8, "black")
+    draw_text(screen, f'Snowball: {player.score}', (0, SCREEN_HEIGHT // 4), "white", SCREEN_HEIGHT // 8, "black")
     hearts = drawings.make_hearts(player.health)
-    screen.blit(hearts, (0, SCREEN_HEIGHT // 4))
+    screen.blit(hearts, (0, SCREEN_HEIGHT * 3//8))
 
     # flip() the display to put your work on screen
     pygame.display.flip()
