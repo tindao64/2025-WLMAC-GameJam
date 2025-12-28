@@ -5,7 +5,7 @@ from config import *
 from enum import Enum
 from typing import Callable
 
-type TileType = str
+TileType = str
 
 class Tile(pygame.sprite.Sprite):
     def __init__(self, *groups):
