@@ -34,6 +34,18 @@ player = Player(all_sprites)
 ice_time_left = 0.0
 play_time_left = PLAY_TIME
 
+screen.blit(drawings.make_how_to_play(), (0, 0))
+pygame.display.flip()
+
+wait = True
+while wait:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            exit()
+        elif event.type == pygame.KEYDOWN:
+            wait = False
+
 while True:
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
@@ -51,14 +63,6 @@ while True:
 
     keys = pygame.key.get_pressed()
 
-    screen.fill("black")
-
-    if ice_time_left > 0:
-        ice_time_left -= dt
-    if ice_time_left <= 0:
-        ice_time_left = 0
-        map.speed = PLAYER_SPEED
-    
     play_time_left -= dt
     if play_time_left <= 0:
         draw_text(screen, f"Game Over! Score: {player.score}", (0, 0), "white", SCREEN_HEIGHT // 5, "blue")
@@ -66,6 +70,14 @@ while True:
         time.sleep(5)
         pygame.quit()
         exit()
+
+    screen.fill("black")
+
+    if ice_time_left > 0:
+        ice_time_left -= dt
+    if ice_time_left <= 0:
+        ice_time_left = 0
+        map.speed = PLAYER_SPEED
 
     all_sprites.update(dt, keys)
     all_sprites.draw(screen)
@@ -84,8 +96,8 @@ while True:
         map.set_tile(d.position[0], d.position[1], grass.Grass())
         player.score += 4
     for i in map.player_collide("ice"):
-        map.speed = PLAYER_SPEED * 20
-        ice_time_left = 1.0
+        map.speed = PLAYER_SPEED * ICE_SPEED_MULT
+        ice_time_left = ICE_SPEED_TIME
     
     map.redraw()
     

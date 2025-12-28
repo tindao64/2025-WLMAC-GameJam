@@ -30,6 +30,8 @@ ice = pygame.image.load("tiles/ice.png").convert_alpha()
 
 heart = pygame.image.load("misc/heart.png").convert_alpha()
 
+how_to_play = pygame.image.load("misc/how_to_play.png").convert_alpha()
+
 def make_player_img(dir: Direction, score: int) -> pygame.Surface:
     snow = None
     if score >= PLAYER_SMALL_BALL_THRESHOLD:
@@ -84,4 +86,8 @@ def make_hearts(count: int) -> pygame.Surface:
     for i in range(count):
         surf.blit(scaled_heart, (i * TILE_DIMENSION, 0))
     return surf
+
+def make_how_to_play() -> pygame.Surface:
+    scale_factor = SCREEN_HEIGHT / how_to_play.get_height()
+    return pygame.transform.scale_by(how_to_play, scale_factor)
 
