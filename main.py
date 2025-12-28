@@ -11,7 +11,7 @@ import deep_snow as _
 import grass
 import water as _
 import ice as _
-
+import wood as _
 
 from player import Player
 from santa import Santa
@@ -28,7 +28,7 @@ all_sprites = pygame.sprite.LayeredUpdates()
 
 # the background (map)
 map = Map(all_sprites)
-map.make_map([50, 10, 10, 10, 10, 10])
+map.make_map([50, 10, 10, 10, 10, 10, 5])
 
 # the player
 player = Player(all_sprites)
