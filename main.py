@@ -12,8 +12,11 @@ import grass
 import water as _
 import ice as _
 
+
 from player import Player
 from map import Map
+import drawings
+import time
 
 clock = pygame.time.Clock()
 dt = 0.0
@@ -29,6 +32,7 @@ map.make_map([50, 10, 10, 10, 10, 10])
 player = Player(all_sprites)
 
 ice_time_left = 0.0
+play_time_left = PLAY_TIME
 
 while True:
     # poll for events
@@ -37,6 +41,13 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
+
+    if player.health <= 0:
+        draw_text(screen, "YOU LOSE!", (0, 0), "white", SCREEN_HEIGHT // 4, "red")
+        pygame.display.flip()
+        time.sleep(5)
+        pygame.quit()
+        exit()
 
     keys = pygame.key.get_pressed()
 
@@ -47,6 +58,14 @@ while True:
     if ice_time_left <= 0:
         ice_time_left = 0
         map.speed = PLAYER_SPEED
+    
+    play_time_left -= dt
+    if play_time_left <= 0:
+        draw_text(screen, f"Game Over! Score: {player.score}", (0, 0), "white", SCREEN_HEIGHT // 5, "blue")
+        pygame.display.flip()
+        time.sleep(5)
+        pygame.quit()
+        exit()
 
     all_sprites.update(dt, keys)
     all_sprites.draw(screen)
@@ -57,6 +76,7 @@ while True:
     for f in map.player_collide("fire"):
         map.set_tile(f.position[0], f.position[1], grass.Grass())
         player.score = 0
+        player.health -= 1
     for w in map.player_collide("water"):
         map.set_tile(w.position[0], w.position[1], grass.Grass())
         player.score //= 2
@@ -64,13 +84,16 @@ while True:
         map.set_tile(d.position[0], d.position[1], grass.Grass())
         player.score += 4
     for i in map.player_collide("ice"):
-        map.speed = PLAYER_SPEED * 6
-        ice_time_left = 4.0
+        map.speed = PLAYER_SPEED * 20
+        ice_time_left = 1.0
     
     map.redraw()
     
     
-    draw_text(screen, f'Score: {player.score}', (0, 0), (255, 255, 255), SCREEN_HEIGHT // 8)
+    draw_text(screen, f'Score: {player.score}', (0, 0), "white", SCREEN_HEIGHT // 8)
+    draw_text(screen, f'Time: {int(play_time_left)}s', (0, SCREEN_HEIGHT // 8), "white", SCREEN_HEIGHT // 8)
+    hearts = drawings.make_hearts(player.health)
+    screen.blit(hearts, (0, SCREEN_HEIGHT // 4))
 
     # flip() the display to put your work on screen
     pygame.display.flip()

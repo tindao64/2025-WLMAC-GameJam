@@ -17,6 +17,8 @@ class Player(pygame.sprite.Sprite):
 
         self.score = 0
 
+        self.health = PLAYER_HEALTH
+
         self._layer = PLAYER_LAYER
     
     def update(self, dt: float, keys: pygame.key.ScancodeWrapper):

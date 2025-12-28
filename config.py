@@ -25,6 +25,9 @@ PLAYER_SMALL_BALL_THRESHOLD = 5
 PLAYER_MEDIUM_BALL_THRESHOLD = 13
 PLAYER_BIG_BALL_THRESHOLD = 20
 
+PLAYER_HEALTH = 3
+PLAY_TIME = 120 # seconds
+
 # Common things
 # Don't change these; these aren't config!
 
