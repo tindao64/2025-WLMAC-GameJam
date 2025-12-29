@@ -4,9 +4,8 @@ from enum import Enum
 import pygame
 
 
-_x, _y = pygame.display.get_desktop_sizes()[0]
-SCREEN_WIDTH = _x // 2
-SCREEN_HEIGHT = _y // 2
+SCREEN_WIDTH = 1920
+SCREEN_HEIGHT = 1080
 
 # Adjust divisor to adjust player size
 PLAYER_DIMENSION = min(SCREEN_WIDTH, SCREEN_HEIGHT) // 8
