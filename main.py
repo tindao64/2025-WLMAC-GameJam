@@ -121,7 +121,8 @@ while True:
         player.move(dt)
     else:
         ice_time_left = 0
-        player.speed = PLAYER_SPEED
+        player.speed = PLAYER_SPEED - int(PLAYER_SPEED * (player.score / 70))
+        player.speed = max(player.speed, PLAYER_SPEED // 3)
 
     all_sprites.update(dt, keys, player.rect)
 
@@ -181,8 +182,6 @@ while True:
     draw_text(screen, f'Snowball: {player.score}', (0, SCREEN_HEIGHT // 4), "white", SCREEN_HEIGHT // 8, "black")
     hearts = drawings.make_hearts(player.health)
     screen.blit(hearts, (0, SCREEN_HEIGHT * 3//8))
-    if player.score >= PLAYER_SNOWBALL_CAP:
-        draw_text(screen, 'Snowball Too Big!', (0, SCREEN_HEIGHT // 2), "white", SCREEN_HEIGHT // 8, "red")
 
     # flip() the display to put your work on screen
     pygame.display.flip()
