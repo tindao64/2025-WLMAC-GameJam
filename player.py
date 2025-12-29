@@ -10,7 +10,7 @@ class Player(pygame.sprite.Sprite):
         self.image = drawings.make_player_img(Direction.UP, 0)
 
         # pos
-        self.rect = self.image.get_rect(center = (0, 0))
+        self.rect = self.image.get_rect(midtop=(MAP_WIDTH * TILE_DIMENSION // 2, PLAYER_DIMENSION))
 
         # dir
         self.direction = Direction.UP

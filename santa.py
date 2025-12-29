@@ -12,9 +12,7 @@ class Santa(pygame.sprite.Sprite):
         self.total_score = 0
     
     def go_to_spawn(self):
-        new_pos = (TILE_DIMENSION // 2, TILE_DIMENSION // 2) 
-        
-        self.rect = self.image.get_rect(center=new_pos)
+        self.rect = self.image.get_rect(midtop=(MAP_WIDTH * TILE_DIMENSION // 2, 0))
 
     def go_to_random(self):
         random_x_min = PLAYER_DIMENSION // 2
