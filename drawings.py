@@ -10,47 +10,42 @@ import sys
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
-    try:
-        # PyInstaller creates a temp folder and stores path in _MEIPASS
-        base_path = sys._MEIPASS
-    except Exception:
-        # For development environment (outside of .exe)
-        base_path = os.path.abspath(".")
-
+    base_path = sys._MEIPASS if hasattr(sys, "_MEIPASS") else os.path.abspath(".")
     return os.path.join(base_path, relative_path)
 
-player_up = pygame.image.load(resource_path("player/up.png")).convert_alpha() ####
-player_down = pygame.image.load(resource_path("player/down.png")).convert_alpha() ####
-player_left = pygame.image.load(resource_path("player/left.png")).convert_alpha() ####
-player_right = pygame.image.load(resource_path("player/right.png")).convert_alpha() ####
+player_up = pygame.image.load(resource_path("player/up.png")).convert_alpha()
+player_down = pygame.image.load(resource_path("player/down.png")).convert_alpha()
+player_left = pygame.image.load(resource_path("player/left.png")).convert_alpha()
+player_right = pygame.image.load(resource_path("player/right.png")).convert_alpha()
 
-ball_small = pygame.image.load(resource_path("player/small_ball.png")).convert_alpha() ####
-ball_med = pygame.image.load(resource_path("player/med_ball.png")).convert_alpha() ####
-ball_big = pygame.image.load(resource_path("player/big_ball.png")).convert_alpha() ####
+ball_small = pygame.image.load(resource_path("player/small_ball.png")).convert_alpha()
+ball_med = pygame.image.load(resource_path("player/med_ball.png")).convert_alpha()
+ball_big = pygame.image.load(resource_path("player/big_ball.png")).convert_alpha()
 
-fire1 = pygame.image.load(resource_path("tiles/fire1.png")).convert_alpha() ####
-fire2 = pygame.image.load(resource_path("tiles/fire2.png")).convert_alpha() ####
+fire1 = pygame.image.load(resource_path("tiles/fire1.png")).convert_alpha()
+fire2 = pygame.image.load(resource_path("tiles/fire2.png")).convert_alpha()
 
-water1 = pygame.image.load(resource_path("tiles/water1.png")).convert_alpha() ####
-water2 = pygame.image.load(resource_path("tiles/water2.png")).convert_alpha() ####
+water1 = pygame.image.load(resource_path("tiles/water1.png")).convert_alpha()
+water2 = pygame.image.load(resource_path("tiles/water2.png")).convert_alpha()
 
-snow_thin1 = pygame.image.load(resource_path("tiles/snow_thin1.png")).convert_alpha() ####
-snow_thin2 = pygame.image.load(resource_path("tiles/snow_thin2.png")).convert_alpha() ####
-snow_thick1 = pygame.image.load(resource_path("tiles/snow_thick1.png")).convert_alpha() ####
-snow_thick2 = pygame.image.load(resource_path("tiles/snow_thick2.png")).convert_alpha() ####
+snow1 = pygame.image.load(resource_path("tiles/snow1.png")).convert_alpha()
+snow2 = pygame.image.load(resource_path("tiles/snow2.png")).convert_alpha()
+snow3 = pygame.image.load(resource_path("tiles/snow3.png")).convert_alpha()
+snow4 = pygame.image.load(resource_path("tiles/snow4.png")).convert_alpha()
+snow = [snow1, snow2, snow3, snow4]
 
-grass = pygame.image.load(resource_path("tiles/grass.png")).convert_alpha() ####
+grass = pygame.image.load(resource_path("tiles/grass.png")).convert_alpha()
 
-ice = pygame.image.load(resource_path("tiles/ice.png")).convert_alpha() ####
+ice = pygame.image.load(resource_path("tiles/ice.png")).convert_alpha()
 
-wood = pygame.image.load(resource_path("tiles/wood.png")).convert_alpha() ############################## ####
+wood = pygame.image.load(resource_path("tiles/wood.png")).convert_alpha()
 
-heart = pygame.image.load(resource_path("misc/heart.png")).convert_alpha() ####
+heart = pygame.image.load(resource_path("misc/heart.png")).convert_alpha()
 
-how_to_play = pygame.image.load(resource_path("misc/how_to_play.png")).convert_alpha() ####
+how_to_play = pygame.image.load(resource_path("misc/how_to_play.png")).convert_alpha()
 
-santa = pygame.image.load(resource_path("misc/santa.png")).convert_alpha() ####
-evil_santa = pygame.image.load(resource_path("misc/evil_santa.png")).convert_alpha() ####
+santa = pygame.image.load(resource_path("misc/santa.png")).convert_alpha()
+evil_santa = pygame.image.load(resource_path("misc/evil_santa.png")).convert_alpha()
 
 def make_player_img(dir: Direction, score: int) -> pygame.Surface:
     snow = None
@@ -69,38 +64,35 @@ def make_player_img(dir: Direction, score: int) -> pygame.Surface:
                 surf.fill((0, 0, 0, 0))
                 surf.blit(snow, (PLAYER_DIMENSION // 6, 0))
                 surf.blit(player, (0, 0))
-        case Direction.DOWN: 
+        case Direction.DOWN:
             player = pygame.transform.scale(player_down.copy(), (PLAYER_DIMENSION, PLAYER_DIMENSION))
             if snow is not None: player.blit(snow, (PLAYER_DIMENSION // 6, PLAYER_DIMENSION // 3))
-        case Direction.LEFT: 
+        case Direction.LEFT:
             player = pygame.transform.scale(player_left.copy(), (PLAYER_DIMENSION, PLAYER_DIMENSION))
             if snow is not None: player.blit(snow, (0, PLAYER_DIMENSION // 6))
-        case Direction.RIGHT: 
+        case Direction.RIGHT:
             player = pygame.transform.scale(player_right.copy(), (PLAYER_DIMENSION, PLAYER_DIMENSION))
             if snow is not None: player.blit(snow, (PLAYER_DIMENSION // 3, PLAYER_DIMENSION // 6))
-    
+
     return player
 
-def make_snow_img() -> pygame.Surface:
-    return pygame.transform.scale(random.choice([snow_thin1, snow_thin2]).copy(), (TILE_DIMENSION, TILE_DIMENSION))
+def make_snow_img(thickness: int) -> pygame.Surface:
+    return pygame.transform.scale(snow[thickness], (TILE_DIMENSION, TILE_DIMENSION))
 
 def make_wood_img() -> pygame.Surface:
-    return pygame.transform.scale(wood.copy(), (TILE_DIMENSION, TILE_DIMENSION))
-
-def make_deep_snow_img() -> pygame.Surface:
-    return pygame.transform.scale(random.choice([snow_thick1, snow_thick2]).copy(), (TILE_DIMENSION, TILE_DIMENSION))
+    return pygame.transform.scale(wood, (TILE_DIMENSION, TILE_DIMENSION))
 
 def make_fire_img() -> pygame.Surface:
-    return pygame.transform.scale(random.choice([fire1, fire2]).copy(), (TILE_DIMENSION, TILE_DIMENSION))
+    return pygame.transform.scale(random.choice([fire1, fire2]), (TILE_DIMENSION, TILE_DIMENSION))
 
 def make_water_img() -> pygame.Surface:
-    return pygame.transform.scale(random.choice([water1, water2]).copy(), (TILE_DIMENSION, TILE_DIMENSION))
+    return pygame.transform.scale(random.choice([water1, water2]), (TILE_DIMENSION, TILE_DIMENSION))
 
 def make_ice_img() -> pygame.Surface:
-    return pygame.transform.scale(ice.copy(), (TILE_DIMENSION, TILE_DIMENSION))
+    return pygame.transform.scale(ice, (TILE_DIMENSION, TILE_DIMENSION))
 
 def make_grass_img() -> pygame.Surface:
-    return pygame.transform.scale(grass.copy(), (TILE_DIMENSION, TILE_DIMENSION))
+    return pygame.transform.scale(grass, (TILE_DIMENSION, TILE_DIMENSION))
 
 def make_hearts(count: int) -> pygame.Surface:
     surf = pygame.Surface((TILE_DIMENSION * (2 * count) // 2 + 1, TILE_DIMENSION // 2)).convert_alpha()
@@ -115,7 +107,7 @@ def make_how_to_play() -> pygame.Surface:
     return pygame.transform.scale_by(how_to_play, scale_factor)
 
 def make_santa() -> pygame.Surface:
-    return pygame.transform.scale(santa.copy(), (PLAYER_DIMENSION, PLAYER_DIMENSION))
+    return pygame.transform.scale(santa, (PLAYER_DIMENSION, PLAYER_DIMENSION))
 
 def make_evil_santa() -> pygame.Surface:
-    return pygame.transform.scale(evil_santa.copy(), (PLAYER_DIMENSION, PLAYER_DIMENSION))
+    return pygame.transform.scale(evil_santa, (PLAYER_DIMENSION, PLAYER_DIMENSION))

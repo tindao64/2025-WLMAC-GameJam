@@ -1,13 +1,12 @@
 import pygame
+pygame.init()
 from config import *
 
 # Initialize pygame and screen before importing other stuff
-pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-import snow as _
+import snow
 import fire as _
-import deep_snow as _
 import grass
 import water as _
 import ice as _
@@ -32,7 +31,6 @@ all_sprites = pygame.sprite.LayeredUpdates()
 tile_weights = {
     "snow": 50,
     "fire": 10,
-    "deep_snow": 0,
     "grass": 10,
     "water": 10,
     "ice": 10,
@@ -40,14 +38,23 @@ tile_weights = {
 }
 
 tile_weight_list = [tile_weights[x] for x in tile.tile_types]
-deep_snow_index = tile.tile_types.index("deep_snow")
 
-def tile_generator(pos):
-    x, y = pos
-    tile_weight_copy = tile_weight_list.copy()
-    tile_weight_copy[deep_snow_index] += y * 50 // MAP_HEIGHT
-    choice = random.choices(tile.tile_types, weights=tile_weight_copy)
-    return choice[0]
+def tile_generator(pos) -> tile.Tile:
+    choice = random.choices(tile.tile_types, weights=tile_weight_list)
+    
+    type = choice[0]
+    if type == "snow":
+        x, y = pos
+        snow_weights = [
+            50,
+            y * 100 // MAP_HEIGHT,
+            y * 100 // MAP_HEIGHT,
+            y * 100 // MAP_HEIGHT
+        ]
+        snow_types = [0, 1, 2, 3]
+        choice = random.choices(snow_types, weights=snow_weights)
+        return snow.Snow(choice[0])
+    return tile.make_tile(type)
 
 
 # the background (map)
@@ -61,7 +68,8 @@ for y in range(3):
 player = Player(all_sprites)
 
 santa = Santa(all_sprites)
-evil_santa = EvilSanta(all_sprites)
+evil_santas = pygame.sprite.Group()
+EvilSanta(all_sprites, evil_santas)
 
 ice_time_left = 0.0
 play_time_left = PLAY_TIME
@@ -78,6 +86,8 @@ while wait:
         elif event.type == pygame.KEYDOWN:
             wait = False
     clock.tick(60)
+
+last_collisions: set[tile.Tile] = set()
 
 while True:
     # poll for events
@@ -120,36 +130,44 @@ while True:
     for sprite in all_sprites:
         screen.blit(sprite.image, (sprite.rect.x + offset_x, sprite.rect.y + offset_y))
 
+    # Do collision detection
+    all_collisions = set(pygame.sprite.spritecollide(player, map.get_all_tiles(), False))
+    all_new_collisions = all_collisions.copy()
+    type_collisions: dict[str, set] = {x: set() for x in tile.tile_types}
+
+    # Store only new collisions
+    for old_collision in last_collisions:
+        if old_collision in all_new_collisions:
+            all_new_collisions.remove(old_collision)
     
-    if map.has_group("snow"):
-        for s in pygame.sprite.spritecollide(player, map.get_group("snow"), False):
-            if (player.score < PLAYER_SNOWBALL_CAP):
-                map.set_tile(s.position, grass.Grass())
-                player.score += 1
-    if map.has_group("fire"):
-        for f in pygame.sprite.spritecollide(player, map.get_group("fire"), False):
-            map.set_tile(f.position, grass.Grass())
-            player.score = 0
-            player.health -= 1
-    if map.has_group("water"):
-        for w in pygame.sprite.spritecollide(player, map.get_group("water"), False):
-            map.set_tile(w.position, grass.Grass())
-            player.score //= 2
-    if map.has_group("deep_snow"):
-        for d in pygame.sprite.spritecollide(player, map.get_group("deep_snow"), False):
-            if player.score < PLAYER_SNOWBALL_CAP:
-                map.set_tile(d.position, grass.Grass())
-                player.score += 4
-    if map.has_group("ice"):
-        for i in pygame.sprite.spritecollide(player, map.get_group("ice"), False):
-            player.speed = PLAYER_SPEED * ICE_SPEED_MULT
-            ice_time_left = ICE_SPEED_TIME
+    last_collisions = all_collisions
+    
+    # Filter collisions into types
+    for collision in all_new_collisions:
+        type_collisions[collision.type()].add(collision)
+    
+    for s in type_collisions["snow"]:
+        s: snow.Snow
+        player.score += 1
+        s.set_thickness(s.thickness - 1)
+        if s.thickness < 0:
+            map.set_tile(s.position, grass.Grass())
+    for f in type_collisions["fire"]:
+        player.score = 0
+        player.health -= 1
+    for i in type_collisions["ice"]:
+        player.speed = PLAYER_SPEED * ICE_SPEED_MULT
+        ice_time_left = ICE_SPEED_TIME
+    for w in type_collisions["water"]:
+        player.score //= 2
     
     if player.rect.colliderect(santa.rect) and player.score > 0:
         santa.total_score += player.score
         player.score = 0
+        if random.randint(1, 3) == 1:
+            EvilSanta(all_sprites, evil_santas)
     
-    if player.rect.colliderect(evil_santa.rect):
+    for evil_santa in pygame.sprite.spritecollide(player, evil_santas, False):
         player.score = 0
         player.health -= 1
         evil_santa.go_to_random()

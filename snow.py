@@ -3,9 +3,13 @@ import tile
 import drawings
 
 class Snow(tile.Tile):
-    def __init__(self, *groups):
+    def __init__(self, thickness = 0, *groups):
         super().__init__(*groups)
-        self.image.blit(drawings.make_snow_img(), (0, 0))
+        self.set_thickness(thickness)
+    
+    def set_thickness(self, thickness):
+        self.thickness = thickness
+        self.image.blit(drawings.make_snow_img(self.thickness), (0, 0))
     
     def type(self):
         return "snow"
