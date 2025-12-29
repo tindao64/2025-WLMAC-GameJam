@@ -4,7 +4,7 @@ import drawings
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, *groups):
-        super().__init__(*groups)
+        super().__init__()
         
         # image
         self.image = drawings.make_player_img(Direction.UP, 0)
@@ -18,7 +18,9 @@ class Player(pygame.sprite.Sprite):
         self.score = 0
         self.speed = PLAYER_SPEED
         self.health = PLAYER_HEALTH
-        self._layer = PLAYER_LAYER
+        self.layer = PLAYER_LAYER
+
+        self.add(*groups)
     
     def move(self, dt: float):
         match self.direction:

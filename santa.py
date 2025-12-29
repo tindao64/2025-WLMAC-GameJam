@@ -5,27 +5,14 @@ import random
 
 class Santa(pygame.sprite.Sprite):
     def __init__(self, *groups) -> None:
-        super().__init__(*groups)
+        super().__init__()
 
         self.image = drawings.make_santa()
-        self.go_to_spawn()
-        self.total_score = 0
-    
-    def go_to_spawn(self):
         self.rect = self.image.get_rect(midtop=(MAP_WIDTH * TILE_DIMENSION // 2, 0))
+        self.total_score = 0
+        self.layer = SANTA_LAYER
 
-    def go_to_random(self):
-        random_x_min = PLAYER_DIMENSION // 2
-        random_x_max = MAP_WIDTH * TILE_DIMENSION - PLAYER_DIMENSION // 2
-        random_y_min = PLAYER_DIMENSION // 2
-        random_y_max = MAP_HEIGHT * TILE_DIMENSION - PLAYER_DIMENSION // 2
+        self.add(*groups)
 
-        new_pos = (
-            random.randint(random_x_min, random_x_max),
-            random.randint(random_y_min, random_y_max)
-        )
-
-        self.rect = self.image.get_rect(center=new_pos)
-    
     def update(self, dt: float, keys: pygame.key.ScancodeWrapper, *_):
         ...

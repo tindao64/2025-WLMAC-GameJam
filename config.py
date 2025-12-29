@@ -46,7 +46,8 @@ class Direction(Enum):
 # Drawing order: bigger number goes above smaller number
 # Draws player on top of map, not other way around
 MAP_LAYER = 0
-PLAYER_LAYER = 1
+SANTA_LAYER = 1
+PLAYER_LAYER = 2
 
 def draw_text(surf: pygame.Surface, text: str, dest, color, size, bg = None):
     font = pygame.font.SysFont(None, size)

@@ -7,7 +7,7 @@ from typing import Callable
 
 class Map(pygame.sprite.Sprite):
     def __init__(self, *groups):
-        super().__init__(*groups)
+        super().__init__()
         
         # image
         self.image = pygame.Surface((MAP_WIDTH * TILE_DIMENSION, MAP_HEIGHT * TILE_DIMENSION)).convert()
@@ -17,7 +17,9 @@ class Map(pygame.sprite.Sprite):
 
         self.all_sprites = OrderedGroup()
 
-        self._layer = MAP_LAYER
+        self.layer = MAP_LAYER
+
+        self.add(*groups)
 
     # Fills in the map with stuff
     # Weights are relative to each other
