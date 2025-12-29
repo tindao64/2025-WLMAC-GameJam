@@ -118,7 +118,8 @@ while True:
 
     if ice_time_left > 0:
         ice_time_left -= dt
-    if ice_time_left <= 0:
+        player.move(dt)
+    else:
         ice_time_left = 0
         player.speed = PLAYER_SPEED
 
