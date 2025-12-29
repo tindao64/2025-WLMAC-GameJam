@@ -13,14 +13,14 @@ def resource_path(relative_path):
     base_path = sys._MEIPASS if hasattr(sys, "_MEIPASS") else os.path.abspath(".")
     return os.path.join(base_path, relative_path)
 
-player_up = pygame.image.load(resource_path("player/up.png")).convert_alpha()
-player_down = pygame.image.load(resource_path("player/down.png")).convert_alpha()
-player_left = pygame.image.load(resource_path("player/left.png")).convert_alpha()
-player_right = pygame.image.load(resource_path("player/right.png")).convert_alpha()
+player = {}
 
-ball_small = pygame.image.load(resource_path("player/small_ball.png")).convert_alpha()
-ball_med = pygame.image.load(resource_path("player/med_ball.png")).convert_alpha()
-ball_big = pygame.image.load(resource_path("player/big_ball.png")).convert_alpha()
+for dir in ["up", "down", "left", "right"]:
+    dir_enum = {"up": Direction.UP, "down": Direction.DOWN, "left": Direction.LEFT, "right": Direction.RIGHT}[dir]
+    player[dir_enum] = {}
+    for size in ["", "small", "med", "big"]:
+        path = resource_path(f"player/{dir}{'_' if len(size) > 0 else ''}{size}.png")
+        player[dir_enum][size] = pygame.image.load(path).convert_alpha()
 
 fire1 = pygame.image.load(resource_path("tiles/fire1.png")).convert_alpha()
 fire2 = pygame.image.load(resource_path("tiles/fire2.png")).convert_alpha()
@@ -48,33 +48,14 @@ santa = pygame.image.load(resource_path("misc/santa.png")).convert_alpha()
 evil_santa = pygame.image.load(resource_path("misc/evil_santa.png")).convert_alpha()
 
 def make_player_img(dir: Direction, score: int) -> pygame.Surface:
-    snow = None
+    snow = ""
     if score >= PLAYER_SMALL_BALL_THRESHOLD:
-        snow = pygame.transform.scale(ball_small.copy(), (PLAYER_DIMENSION * 2//3, PLAYER_DIMENSION * 2//3))
+        snow = "small"
     if score >= PLAYER_MEDIUM_BALL_THRESHOLD:
-        snow = pygame.transform.scale(ball_med.copy(), (PLAYER_DIMENSION * 2//3, PLAYER_DIMENSION * 2//3))
+        snow = "med"
     if score >= PLAYER_BIG_BALL_THRESHOLD:
-        snow = pygame.transform.scale(ball_big.copy(), (PLAYER_DIMENSION * 2//3, PLAYER_DIMENSION * 2//3))
-
-    match dir:
-        case Direction.UP:
-            player = pygame.transform.scale(player_up.copy(), (PLAYER_DIMENSION, PLAYER_DIMENSION))
-            if snow is not None:
-                surf = pygame.Surface((PLAYER_DIMENSION, PLAYER_DIMENSION)).convert_alpha()
-                surf.fill((0, 0, 0, 0))
-                surf.blit(snow, (PLAYER_DIMENSION // 6, 0))
-                surf.blit(player, (0, 0))
-        case Direction.DOWN:
-            player = pygame.transform.scale(player_down.copy(), (PLAYER_DIMENSION, PLAYER_DIMENSION))
-            if snow is not None: player.blit(snow, (PLAYER_DIMENSION // 6, PLAYER_DIMENSION // 3))
-        case Direction.LEFT:
-            player = pygame.transform.scale(player_left.copy(), (PLAYER_DIMENSION, PLAYER_DIMENSION))
-            if snow is not None: player.blit(snow, (0, PLAYER_DIMENSION // 6))
-        case Direction.RIGHT:
-            player = pygame.transform.scale(player_right.copy(), (PLAYER_DIMENSION, PLAYER_DIMENSION))
-            if snow is not None: player.blit(snow, (PLAYER_DIMENSION // 3, PLAYER_DIMENSION // 6))
-
-    return player
+        snow = "big"
+    return pygame.transform.scale(player[dir][snow], (PLAYER_DIMENSION, PLAYER_DIMENSION))
 
 def make_snow_img(thickness: int) -> pygame.Surface:
     return pygame.transform.scale(snow[thickness], (TILE_DIMENSION, TILE_DIMENSION))
